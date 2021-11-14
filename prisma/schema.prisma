@@ -7,6 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+<<<<<<< HEAD
 model Tutor {
   id           Int       @id @default(autoincrement())
   username     String    @unique
@@ -37,15 +38,43 @@ model Student {
   updatedAt   DateTime?   @updatedAt
   deletedAt   DateTime?
   classes     Class[]
+=======
+model Session {
+  id            String   @id @default(uuid())
+  videoUrl      String?
+  schedule      DateTime
+  isCreated     Boolean  @default(false)
+  studentId     Int?
+  tutorId       Int
+  studentSocket String   @default("")
+  tutorSocket   String   @default("")
+  isReady       Boolean  @default(false)
+  duration      Int      @default(20)
+  Student       Student? @relation(fields: [studentId], references: [id])
+  Tutor         Tutor    @relation(fields: [tutorId], references: [id])
+
+  @@unique([schedule, tutorId])
+}
+
+model Content {
+  id        Int       @id @default(autoincrement())
+  text      String
+  createdAt DateTime  @default(now())
+  deletedAt DateTime?
+  authorId  Int
+  tutorId   Int
+  Tutor     Tutor     @relation(fields: [tutorId], references: [id])
+>>>>>>> 6ff2f03 (change to express)
 }
 
 model Evaluation {
-  studentId     Int     @id
-  student       Student @relation(fields: [studentId], references: [id])
+  id            Int     @id
+  studentId     Int     @unique
   fluency       Int
   vocabulary    Int
   grammar       Int
   pronunciation Int
+<<<<<<< HEAD
 }
 
 model Message {
@@ -72,4 +101,45 @@ model Class {
   messages      Message[]
 
   @@unique([schedule, tutorId])
+=======
+  average       Float
+  Student       Student @relation(fields: [studentId], references: [id])
+}
+
+model Student {
+  id          Int         @id @default(autoincrement())
+  username    String      @unique
+  password    String
+  firstname   String
+  lastname    String?     @default("")
+  birthYear   Int         @db.SmallInt
+  leftSession Int         @default(0)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime?
+  deletedAt   DateTime?
+  nationality String      @default("")
+  rating      Int         @default(0)
+  timezone    String      @default("")
+  avatar      String?
+  refresh     String?
+  Session     Session[]
+  Evaluation  Evaluation?
+}
+
+model Tutor {
+  id             Int       @id @default(autoincrement())
+  username       String    @unique
+  password       String
+  firstname      String
+  lastname       String?   @default("")
+  birthYear      Int       @db.SmallInt
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime?
+  monthlySession Int       @default(0)
+  rating         Int       @default(0)
+  avatar         String?
+  refresh        String?
+  Session        Session[]
+  Content        Content[]
+>>>>>>> 6ff2f03 (change to express)
 }

@@ -2,4 +2,6 @@
 /dist
 npm-debug.log
 .DS_Store
-/*.env
+.env
+
+yarn-*.log
