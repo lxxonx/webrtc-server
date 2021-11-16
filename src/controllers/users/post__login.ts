@@ -23,8 +23,8 @@ const post__login = async (req: Request, res: Response, next: NextFunction) => {
     return res.json(isValidUsername);
   }
 
-  const user = await prisma.student.findUnique({
-    where: { username: "$s_" + username },
+  const user = await prisma.user.findUnique({
+    where: { username },
   });
 
   if (!user) {
@@ -35,11 +35,11 @@ const post__login = async (req: Request, res: Response, next: NextFunction) => {
     });
   }
   if (await argon2.verify(user!.password, password)) {
-    const accessToken = jwt.sign(user.username);
+    const accessToken = jwt.sign(user.id, user.role);
     const refreshToken = jwt.refresh();
-    await prisma.student.update({
+    await prisma.user.update({
       where: {
-        username: "$s_" + username,
+        username,
       },
       data: {
         refresh: refreshToken,

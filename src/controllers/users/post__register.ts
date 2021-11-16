@@ -4,17 +4,17 @@ import { NextFunction, Request, Response } from "express";
 import createHttpError from "http-errors";
 import jwt from "../../utils/jwt";
 import validate from "../../utils/validate";
-interface Student_Register_Inputs {
+type User_Register_Inputs = {
   username: string;
   password: string;
   firstname: string;
   lastname?: string;
   birthYear: number;
   nationality?: string;
-}
-
+};
+type User_Role = "tutor" | "student";
 const post__register = async (
-  { body }: Request,
+  { body, params }: Request,
   res: Response,
   next: NextFunction
 ) => {
@@ -26,7 +26,8 @@ const post__register = async (
     lastname,
     birthYear,
     nationality,
-  }: Student_Register_Inputs = body;
+  }: User_Register_Inputs = body;
+  const { role } = params;
 
   // valid check
   const isValidPassword = validate.require_string(password);
@@ -39,8 +40,8 @@ const post__register = async (
   }
 
   // validate username
-  const username_input = modified_username(username);
-  if (!username_input) {
+  const trimmed = username.trim();
+  if (!trimmed) {
     return res.json({
       ok: false,
       field: "username",
@@ -57,22 +58,23 @@ const post__register = async (
   }
   try {
     const hash = await argon2.hash(password);
-    await prisma.student.create({
+    const user = await prisma.user.create({
       data: {
-        username: username_input,
+        username,
         password: hash,
         birthYear: +birthYear,
         firstname,
         lastname,
         nationality,
+        role: role as User_Role,
       },
     });
     // return res.json();
-    const accessToken = jwt.sign(username_input);
+    const accessToken = jwt.sign(user.id, user.role);
     const refreshToken = jwt.refresh();
-    await prisma.student.update({
+    await prisma.user.update({
       where: {
-        username: username_input,
+        username: trimmed,
       },
       data: {
         refresh: refreshToken,
@@ -101,11 +103,3 @@ const post__register = async (
   }
 };
 export default post__register;
-
-const modified_username = (username: string): string | false => {
-  const trimmed = username.trim();
-  if (!trimmed) {
-    return false;
-  }
-  return "$s_" + trimmed;
-};

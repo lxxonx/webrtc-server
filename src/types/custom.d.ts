@@ -1,12 +1,9 @@
 import { Student, Tutor } from ".prisma/client";
-import { Request } from "express";
 
-export class Context {
-  constructor(
-    public username?: string | undefined,
-    public role?: "Student" | "Tutor" | undefined
-  ) {}
-}
+export type Context = {
+  userId?: number;
+  role?: "student" | "tutor" | undefined;
+};
 declare global {
   namespace Express {
     interface Request {

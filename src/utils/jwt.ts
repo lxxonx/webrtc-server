@@ -5,19 +5,19 @@ const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET as Secret;
 const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET as Secret;
 
 export type PayloadType = {
-  username: string;
-  role: "Tutor" | "Student";
+  userId: number;
+  role: "tutor" | "student";
 };
 
 export default {
-  sign: (username: string) => {
+  sign: (userId: number, role: "tutor" | "student") => {
     const payload = {
-      username: username,
-      role: username.startsWith("$t_") ? "Tutor" : "Student",
+      userId,
+      role,
     };
     return jwt.sign(payload, ACCESS_TOKEN_SECRET, {
       algorithm: "HS512",
-      expiresIn: "30s",
+      expiresIn: "5m",
     });
   },
   verify: (token: string) => {
@@ -26,7 +26,7 @@ export default {
       decoded = jwt.verify(token, ACCESS_TOKEN_SECRET) as PayloadType;
       return {
         ok: true,
-        username: decoded.username,
+        userId: decoded.userId,
         role: decoded.role,
       };
     } catch (err) {
@@ -36,36 +36,24 @@ export default {
       };
     }
   },
+  decode: (token: string) => {
+    return jwt.decode(token);
+  },
   refresh: (maxAge: SignOptions["expiresIn"] = "1d") => {
     return jwt.sign({}, REFRESH_TOKEN_SECRET, {
       algorithm: "HS512",
       expiresIn: maxAge,
     });
   },
-  refreshVerify: async (
-    refresh: string,
-    username: string
-  ): Promise<Boolean> => {
-    let user;
-    if (username.startsWith("$t_")) {
-      user = await prisma.tutor.findUnique({
-        where: {
-          username,
-        },
-        select: {
-          refresh: true,
-        },
-      });
-    } else {
-      user = await prisma.student.findUnique({
-        where: {
-          username,
-        },
-        select: {
-          refresh: true,
-        },
-      });
-    }
+  refreshVerify: async (refresh: string, userId: number): Promise<Boolean> => {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+      select: {
+        refresh: true,
+      },
+    });
     try {
       if (refresh === user?.refresh) {
         try {

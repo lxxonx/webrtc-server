@@ -1,45 +1,37 @@
 import { NextFunction, Request, Response } from "express";
 import createHttpError from "http-errors";
-import prisma from "../../prisma";
+import prisma from "src/prisma";
 
-type Session_Create_Type = {
+type Session_Create_Input = {
   schedule: Date;
 };
 
 const post__create = async (
-  { body, context }: Request,
+  req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  const { schedule }: Session_Create_Type = body;
-  const { username } = context;
-  if (!username || !username.startsWith("$t_")) {
-    return next(createHttpError(401));
+  const { schedule } = req.body as Session_Create_Input;
+  const { userId, role } = req.context;
+
+  if (role !== "tutor" || !userId) {
+    return next(createHttpError(403));
   }
-  try {
-    const tutor = await prisma.tutor.findUnique({
-      where: {
-        username,
-      },
-      select: {
-        id: true,
-      },
+
+  if (!schedule) {
+    return res.json({
+      ok: false,
+      field: "schedule",
+      message: "REQUIRE_FIELD_NOT_PROVIDED",
     });
-    if (!tutor) {
-      return res.json({
-        ok: false,
-        message: "USER_NOT_FOUND",
-      });
-    }
-    const session = await prisma.session.create({
-      data: {
-        tutorId: tutor!.id,
-        schedule,
-      },
-    });
-    return res.json(session);
-  } catch (e) {
-    return next(createHttpError(500));
   }
+
+  await prisma.session.create({
+    data: {
+      schedule,
+      tutorId: userId,
+    },
+  });
 };
+
 export default post__create;
