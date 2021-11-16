@@ -1,5 +1,6 @@
 import get__current_user from "./users/get__current_user";
 import post__login from "./users/post__login";
+import post__logout from "./users/post__logout";
 import post__refresh_token from "./users/post__refresh_token";
 import post__register from "./users/post__register";
 
@@ -7,6 +8,7 @@ export default {
   post: {
     register: post__register,
     login: post__login,
+    logout: post__logout,
     refreshToken: post__refresh_token,
   },
   get: {

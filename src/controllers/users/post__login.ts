@@ -45,9 +45,13 @@ const post__login = async (req: Request, res: Response, next: NextFunction) => {
         refresh: refreshToken,
       },
     });
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV !== "development",
+    });
     return res.json({
       ok: true,
-      tokens: { accessToken, refreshToken },
+      token: accessToken,
     });
   }
   return next(createHttpError(500));

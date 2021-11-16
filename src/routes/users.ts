@@ -7,6 +7,8 @@ const users = Router();
 
 users.get("/current-user", auth, usersCtrl.get.currentUser);
 users.post("/login", usersCtrl.post.login);
+users.post("/logout", usersCtrl.post.logout);
+users.post("/register", usersCtrl.post.register);
 users.post("/refresh", usersCtrl.post.refreshToken);
 
 export default users;

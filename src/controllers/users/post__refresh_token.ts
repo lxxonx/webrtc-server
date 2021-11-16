@@ -32,10 +32,7 @@ const post__refresh_token = async (
 
         return res.status(200).send({
           ok: true,
-          tokens: {
-            accessToken: newAccessToken,
-            refreshToken,
-          },
+          token: newAccessToken,
         });
       }
     } else {

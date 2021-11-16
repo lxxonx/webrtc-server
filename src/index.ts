@@ -7,6 +7,7 @@ import swaggerUi from "swagger-ui-express";
 import routes from "./routes";
 import swagger from "./swagger";
 import http from "http";
+import cookieParser from "cookie-parser";
 import { Server } from "socket.io";
 // init dotenv
 dotenv.config();
@@ -19,6 +20,7 @@ const startServer = async () => {
   app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
   app.use(logger("dev"));
   app.use(compression());
+  app.use(cookieParser());
   app.use(json());
   app.use(urlencoded({ extended: true }));
   app.use("/api", routes);

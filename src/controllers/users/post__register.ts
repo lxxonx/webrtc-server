@@ -2,7 +2,6 @@ import argon2 from "argon2";
 import prisma from "../../prisma";
 import { NextFunction, Request, Response } from "express";
 import createHttpError from "http-errors";
-import jwt from "../../utils/jwt";
 import validate from "../../utils/validate";
 type User_Register_Inputs = {
   username: string;
@@ -58,7 +57,7 @@ const post__register = async (
   }
   try {
     const hash = await argon2.hash(password);
-    const user = await prisma.user.create({
+    await prisma.user.create({
       data: {
         username,
         password: hash,
@@ -69,23 +68,11 @@ const post__register = async (
         role: role as User_Role,
       },
     });
-    // return res.json();
-    const accessToken = jwt.sign(user.id, user.role);
-    const refreshToken = jwt.refresh();
-    await prisma.user.update({
-      where: {
-        username: trimmed,
-      },
-      data: {
-        refresh: refreshToken,
-      },
-    });
+
     return res.json({
       ok: true,
-      tokens: {
-        accessToken,
-        refreshToken,
-      },
+      message: "USER_REGISTER_SUCCESS",
+      field: "regiser",
     });
   } catch (e) {
     if (e.code === "P2002") {
