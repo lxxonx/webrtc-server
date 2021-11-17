@@ -12,6 +12,7 @@ type Login_Input_Type = {
 const post__login = async (req: Request, res: Response, next: NextFunction) => {
   // args
   const { username, password }: Login_Input_Type = req.body;
+  const { role } = req.params;
 
   // valid check
   const isValidPassword = validate.require_string(password);
@@ -24,7 +25,7 @@ const post__login = async (req: Request, res: Response, next: NextFunction) => {
   }
 
   const user = await prisma.user.findUnique({
-    where: { username },
+    where: { username: role === "tutor" ? "$t_" + username : username },
   });
 
   if (!user) {

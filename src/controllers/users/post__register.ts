@@ -59,7 +59,7 @@ const post__register = async (
     const hash = await argon2.hash(password);
     await prisma.user.create({
       data: {
-        username,
+        username: role === "tutor" ? "$t_" + username : username,
         password: hash,
         birthYear: +birthYear,
         firstname,
