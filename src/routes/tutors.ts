@@ -1,5 +1,5 @@
 import { Router } from "express";
-import tutorsCtrl from "src/controllers/tutors.ctrl";
+import tutorsCtrl from "../controllers/tutors.ctrl";
 
 // /api/tutors
 

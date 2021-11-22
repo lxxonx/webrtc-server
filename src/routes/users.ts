@@ -1,5 +1,5 @@
 import { Router } from "express";
-import usersCtrl from "src/controllers/users.ctrl";
+import usersCtrl from "../controllers/users.ctrl";
 import auth from "../middlewares/auth";
 
 // api/users

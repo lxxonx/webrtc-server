@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import createHttpError from "http-errors";
-import prisma from "src/prisma";
+import prisma from "../../prisma";
 
 const get__current_user = async (
   req: Request,
@@ -8,13 +8,19 @@ const get__current_user = async (
   next: NextFunction
 ) => {
   if (!req.context.userId || !req.context.role) {
-    return next(createHttpError(401));
+    return res.json({
+      ok: false,
+      message: "NOT_LOGGED_IN",
+    });
   }
   try {
     const user = await prisma.user.findUnique({
       where: { id: req.context.userId },
     });
-    return res.json(user);
+    return res.json({
+      ok: true,
+      user,
+    });
   } catch (e) {
     console.log(e);
     return next(createHttpError(500));

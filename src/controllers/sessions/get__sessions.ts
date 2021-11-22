@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import prisma from "src/prisma";
+import prisma from "../../prisma";
 
 const get__sessions = async (req: Request, res: Response) => {
   const { starting_date } = req.params;

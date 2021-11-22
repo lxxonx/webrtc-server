@@ -1,4 +1,5 @@
 import get__sessions from "./sessions/get__sessions";
+import io__connect from "./sessions/io__connect";
 import post__create from "./sessions/post__create";
 
 export default {
@@ -7,5 +8,8 @@ export default {
   },
   get: {
     _: get__sessions,
+  },
+  io: {
+    connect: io__connect,
   },
 };
