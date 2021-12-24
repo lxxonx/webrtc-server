@@ -31,7 +31,9 @@ const get__sessions = async (req: Request, res: Response) => {
   });
   return res.json({
     ok: true,
-    data: sesseions,
+    result: {
+      sesseions,
+    },
   });
 };
 

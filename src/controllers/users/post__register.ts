@@ -37,7 +37,6 @@ const post__register = async (
   if (!isValidFirstname.ok) {
     return res.json(isValidFirstname);
   }
-
   // validate username
   const trimmed = username.trim();
   if (!trimmed) {
@@ -68,7 +67,6 @@ const post__register = async (
         role: role as User_Role,
       },
     });
-
     return res.json({
       ok: true,
       message: "USER_REGISTER_SUCCESS",

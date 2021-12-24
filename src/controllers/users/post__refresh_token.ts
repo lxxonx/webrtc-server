@@ -7,14 +7,15 @@ const post__refresh_token = async (
   res: Response,
   next: NextFunction
 ) => {
-  if (req.headers.authorization && req.headers.refresh) {
+  if (req.headers.authorization && req.cookies.refreshToken) {
     const authToken = req.headers.authorization.split("Bearer ")[1];
-    const refreshToken = req.headers.refresh as string;
+    const refreshToken = req.cookies.refreshToken as string;
 
     const authResult = jwt.verify(authToken);
 
     const decoded = jwt.decode(authToken) as PayloadType;
 
+    console.log(decoded);
     if (decoded === null) {
       return next(createHttpError(401));
     }
@@ -32,7 +33,7 @@ const post__refresh_token = async (
 
         return res.status(200).send({
           ok: true,
-          token: newAccessToken,
+          result: { token: newAccessToken },
         });
       }
     } else {

@@ -52,7 +52,9 @@ const post__login = async (req: Request, res: Response, next: NextFunction) => {
     });
     return res.json({
       ok: true,
-      token: accessToken,
+      result: {
+        token: accessToken,
+      },
     });
   }
   return next(createHttpError(500));

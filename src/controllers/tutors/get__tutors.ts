@@ -22,7 +22,9 @@ const get__tutors = async (req: Request, res: Response, next: NextFunction) => {
     }
     return res.json({
       ok: true,
-      tutor,
+      result: {
+        tutor,
+      },
     });
   } catch (e) {
     console.log(e);

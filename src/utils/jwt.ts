@@ -54,18 +54,21 @@ export default {
         refresh: true,
       },
     });
+
     try {
       if (refresh === user?.refresh) {
         try {
           jwt.verify(refresh, REFRESH_TOKEN_SECRET);
           return true;
         } catch (err) {
+          console.log(err);
           return false;
         }
       } else {
         return false;
       }
     } catch (err) {
+      console.log(err);
       return false;
     }
   },

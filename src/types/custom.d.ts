@@ -11,4 +11,9 @@ declare global {
       user: Student | Tutor;
     }
   }
+  namespace Socket {
+    interface Handshake {
+      context: Context;
+    }
+  }
 }
