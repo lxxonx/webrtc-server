@@ -17,7 +17,7 @@ export default {
     };
     return jwt.sign(payload, ACCESS_TOKEN_SECRET, {
       algorithm: "HS512",
-      expiresIn: "5m",
+      expiresIn: "10s",
     });
   },
   verify: (token: string) => {
